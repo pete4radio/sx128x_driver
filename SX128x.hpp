@@ -1037,7 +1037,8 @@ public:
 		GPIO_PIN_BUSY,
 		GPIO_PIN_DIO1,
 		GPIO_PIN_DIO2,
-		GPIO_PIN_DIO3
+		GPIO_PIN_DIO3,
+		GPIO_PIN_TCXO
 	} GpioPinFunction_t;
 
 	virtual uint8_t HalGpioRead(GpioPinFunction_t func) = 0;
@@ -1283,6 +1284,12 @@ public:
 	void WaitOnBusy();
 
 	void WaitOnBusyLong();
+
+
+	/*!
+	 * \brief Energizes the TCXO_EN oscillator
+	 */
+	virtual void TCXO_EN(void);
 
 	/*!
 	 * \brief Resets the radio

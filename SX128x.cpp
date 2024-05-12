@@ -27,6 +27,7 @@
 void SX128x::Init() {
 	Reset();
 	Wakeup();
+	TCXO_EN();
 	SetRegistersDefault();
 }
 
@@ -1439,6 +1440,11 @@ void SX128x::WaitOnBusyLong() {
 	while (HalGpioRead(GPIO_PIN_BUSY)) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
+}
+
+void SX128x:TCXO_EN(void) {
+	std::lock_guard<std::mutex> lg(IOLock);
+	HalGPIOWrite(GPIO_PIN_TCXO, 1);
 }
 
 void SX128x::Reset(void) {
