@@ -1442,9 +1442,9 @@ void SX128x::WaitOnBusyLong() {
 	}
 }
 
-void SX128x:TCXO_EN(void) {
+void SX128x::TCXO_EN(void) {
 	std::lock_guard<std::mutex> lg(IOLock);
-	HalGPIOWrite(GPIO_PIN_TCXO, 1);
+	HalGpioWrite(GPIO_PIN_TCXO, 1);
 }
 
 void SX128x::Reset(void) {
