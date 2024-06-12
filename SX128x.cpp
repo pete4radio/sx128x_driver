@@ -23,12 +23,18 @@
 */
 
 #include "SX128x.hpp"
+#include <iostream>
 
 void SX128x::Init() {
+	std::cout << "SX128x::Init before Reset" << std::endl;
 	Reset();
+	std::cout << "SX128x::Init before Wakeup" << std::endl;
 	Wakeup();
+	std::cout << "SX128x::Init before TCXO_EN" << std::endl;
 	TCXO_EN();
+	std::cout << "SX128x::Init before SetRegistersDefault" << std::endl;
 	SetRegistersDefault();
+	std::cout << "SX128x::Init after SetRegistersDefault" << std::endl;
 }
 
 void SX128x::SetRegistersDefault(void )
@@ -1431,14 +1437,18 @@ void SX128x::HalSpiWrite(const uint8_t *buffer_out, uint16_t size) {
 }
 
 void SX128x::WaitOnBusy() {
+	int counter = 10000;
 	while (HalGpioRead(GPIO_PIN_BUSY)) {
 		std::this_thread::sleep_for(std::chrono::microseconds(10));
+		if (counter-- == 0) { std::cout << "WaitOnBusy::ERROR Busy stuck high, timeout" << std::endl; break;}
 	}
 }
 
 void SX128x::WaitOnBusyLong() {
+	int counter = 1000;
 	while (HalGpioRead(GPIO_PIN_BUSY)) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		if (counter-- == 0) { std::cout << "WaitOnBusyLong::ERROR Busy stuck high, timeout" << std::endl; break;}
 	}
 }
 
@@ -1461,12 +1471,20 @@ void SX128x::Wakeup(void) {
 	std::lock_guard<std::mutex> lg(IOLock);
 
 	if (SX1280_DEBUG) {
-		printf("SX1280: Wakeup\n");
+		printf("SX1280: Wakeup, got the mutex\n");
 	}
 
 	uint8_t buf[2] = {RADIO_GET_STATUS, 0};
 
+	if (SX1280_DEBUG) {
+		printf("SX1280: Wakeup, created the Radio Status request\n");
+	}
+
 	HalSpiWrite(buf, 2);
+
+	if (SX1280_DEBUG) {
+		printf("SX1280: Wakeup, wrote the Radio Status request\n");
+	}
 
 	// Wait for chip to be ready.
 	WaitOnBusyLong();
